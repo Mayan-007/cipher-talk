@@ -1,9 +1,10 @@
+import { Button } from "@material-ui/core"
+// import Button from "@material-ui/core/Button"
+
 const App = () => {
-  return (
-	<div>
-	  <h1>Hello itachi</h1>
-	</div>
-  )
+	return (
+		<Button variant='contained' color='primary'>Hello</Button>
+	)
 }
 
 export default App
