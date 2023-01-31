@@ -1,4 +1,4 @@
-require('dotenv').config({ path: './config.env' })
+require('dotenv').config({ path: '../env/.env' })
 const mongoose = require('mongoose')
 
 mongoose.set('strictQuery', true)
