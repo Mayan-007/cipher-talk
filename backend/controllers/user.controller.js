@@ -1,8 +1,8 @@
-const crypto = require('crypto')
+require('dotenv').config({ path: '../env/.env' })
+const jwt = require('jsonwebtoken')
 const sendEmail = require('../utils/email')
 const {
     User: { User, validateUser },
-    Token: { Token },
 } = require('../models')
 
 const postRegister = async (req, res) => {
@@ -16,70 +16,62 @@ const postRegister = async (req, res) => {
         password,
     })
 
-    user.save((err, user) => {
-        if (err) {
-            return res.status(500).send({ msg: err.message })
-        }
-        const token = new Token({
-            _userId: user._id,
-            token: crypto.randomBytes(32).toString('hex'),
+    try {
+        await user.save()
+
+        const verificationLink = `${
+            process.env.BASE_URL
+        }/verify?token=${jwt.sign(
+            { email: user.email },
+            process.env.JWT_SECRET_KEY,
+            {
+                expiresIn: '1h',
+            }
+        )}`
+
+        const html = `
+            <center>
+            <h1>Verify your email address</h1>
+            <p>Thanks for signing up for Cipher Talk! We're excited to have you as an early user.</p>
+            <p>Please verify your email address by clicking the link below.</p>
+            <a href="${verificationLink}">${verificationLink}</a>
+            </center>
+        `
+        await sendEmail({
+            email: user.email,
+            subject: 'Verify your email address',
+            html,
         })
 
-        token.save((err) => {
-            if (err) {
-                return res.status(500).send({ msg: err.message })
-            }
-            sendEmail({
-                email: user.email,
-                subject: 'Account Verification Token',
-                text: `Hello ${user.name},
-                Please verify your account by clicking the link: ${process.env.BASE_URL}/confirmation/${token.token}`,
-            })
-            res.status(200).send(
-                'A verification email has been sent to ' + user.email + '.'
-            )
+        res.status(200).send({
+            msg: 'A verification email has been sent to ' + user.email + '.',
         })
-    })
+    } catch (err) {
+        return res.status(400).send(err.message)
+    }
 }
 
-const getConfirmation = (req, res) => {
-    Token.findOne({ token: req.params.token }, (err, token) => {
-        if (err)
-            return res.status(500).send({
-                type: 'database-error',
-                msg: err.message,
-            })
-        if (!token)
-            return res.status(400).send({
-                type: 'not-verified',
-                msg: 'We were unable to find a valid token. Your token may have expired.',
-            })
+const getVerify = async (req, res) => {
+    const { token } = req.query
+    if (!token) return res.status(400).send('Invalid token')
 
-        User.findOne({ _id: token._userId }, (err, user) => {
-            if (!user)
-                return res.status(400).send({
-                    msg: 'We were unable to find a user for this token.',
-                })
-            if (user.isVerified)
-                return res.status(400).send({
-                    type: 'already-verified',
-                    msg: 'This user has already been verified.',
-                })
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY)
+        const { email } = decoded
 
-            user.isVerified = true
-            user.save((err) => {
-                if (err) {
-                    return res.status(500).send({ msg: err.message })
-                }
-                res.status(200).send(
-                    'The account has been verified. Please log in.'
-                )
-            })
-        })
-    })
+        const user = await User.findOne({ email })
+        if (!user) res.status(404).send('Invalid Token! User not found')
+        user.isVerified = true
+        await user.save()
+
+        res.status(200).send('Email Verification Successfully')
+    } catch (err) {
+        console.err('Error Verifying Email: ', err)
+        res.status(500).send('Error Verifying Email')
+    }
 }
 
 module.exports = {
     postRegister,
-    getConfirmation,
+    getVerify,
 }

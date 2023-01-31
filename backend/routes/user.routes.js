@@ -1,12 +1,12 @@
-require('dotenv').config({ path: './config/config.env' })
+require('dotenv').config({ path: './env/.env' })
 const express = require('express')
 const router = express.Router()
 const {
-    user: { postRegister, getConfirmation },
+    user: { postRegister, getVerify },
 } = require('../controllers')
 
 router.post('/register', postRegister)
 
-router.get('/confirmation/:token', getConfirmation)
+router.get('/verify', getVerify)
 
 module.exports = router

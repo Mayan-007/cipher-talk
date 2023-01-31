@@ -1,7 +1,7 @@
 const nodeMailer = require('nodemailer')
 const dotenv = require('dotenv')
 
-dotenv.config({ path: './config.env' })
+dotenv.config({ path: './.env' })
 
 const { EMAIL_SERVICE, EMAIL_USER, EMAIL_PASS } = process.env
 
@@ -18,7 +18,7 @@ const sendEmail = async (options) => {
         from: `Cipher Talk <${process.env.EMAIL_USER}>`,
         to: options.email,
         subject: options.subject,
-        text: options.text,
+        html: options.html,
     }
 
     await transporter
