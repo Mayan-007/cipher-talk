@@ -20,8 +20,10 @@ const userSchema = new Schema(
         password: {
             type: String,
             required: true,
-            minlength: 8,
-            maxlength: 32,
+        },
+        salt: {
+            type: String,
+            required: true,
         },
         isVerified: {
             type: Boolean,
@@ -40,6 +42,7 @@ function validateUser(user) {
         name: Joi.string().min(3).max(50).required(),
         email: Joi.string().min(5).max(255).required().email(),
         password: Joi.string().min(8).max(32).required(),
+        confirm_password: Joi.any().valid(Joi.ref('password')).required(),
     })
 
     return schema.validate(user)
