@@ -1,7 +1,8 @@
 import React from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Auth from './components/Auth/Auth'
-import Chatboard from './components/Chatboard/Chatboard'
+import Chatscreen from './components/Chatscreen/Chatscreen'
+import About from './components/Home/About'
 import Home from './components/Home/Home'
 
 const App = () => {
@@ -10,7 +11,8 @@ const App = () => {
 			<Routes>
 				<Route exact path="/" element={<Home />} />
 				<Route exact path="/auth" element={<Auth />} />
-				<Route exact path="/chatboard" element={<Chatboard />} />
+				<Route exact path="/about" element={<About />} />
+				<Route exact path="/chatboard" element={<Chatscreen />} />
 			</Routes>
 		</BrowserRouter>
 	)
