@@ -15,7 +15,7 @@ const Chatscreen = () => {
 		}
 	}
 	return (
-		<Row>
+		<Row className='ms-0 me-0 pe-0 ps-0'>
 			<Col md={4} style={styles.chats}>
 				<Chats />
 			</Col>

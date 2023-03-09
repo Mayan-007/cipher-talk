@@ -11,7 +11,7 @@ const Auth = () => {
 	}
 	const styles = {
 		background: {
-			backgroundImage: `url('images/Hacker.jpg')`,
+			backgroundImage: `url('images/Hacker2.jpg')`,
 			backgroundSize: 'cover',
 			backgroundPosition: 'center',
 			backgroundRepeat: 'no-repeat',

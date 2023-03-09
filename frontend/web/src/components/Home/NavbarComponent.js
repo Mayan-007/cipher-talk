@@ -15,7 +15,7 @@ const NavbarComponent = () => {
                     <Nav.Link as={Link} active={location.pathname === "/about" ? true : false} to="/about">About</Nav.Link>
                 </Nav>
                 <Nav>
-                    <Nav.Link as={Link} to="/auth">Login/Signup</Nav.Link>
+                    <Nav.Link as={Link} to="/auth">Logout</Nav.Link>
                 </Nav>
             </Container>
         </Navbar>
